@@ -1,0 +1,819 @@
+<style>
+  /* ===== RESET ===== */
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html, body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  /* ===== FONDO ===== */
+  body {
+    min-height: 100vh;
+    background: #0f0e1a;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 16px;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  }
+
+  /* ===== CONTENEDOR ===== */
+  .embed-generator {
+    max-width: 920px;
+    width: 100%;
+    margin-top: 16px;
+    padding: 28px 22px 36px;
+    background: #1a1a2e;
+    color: #fff;
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+
+  /* ===== ENCABEZADO ===== */
+  .embed-generator .header {
+    margin-bottom: 24px;
+    text-align: center;
+  }
+
+  .embed-generator .header h1 {
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: #e94560;
+    margin-bottom: 4px;
+  }
+
+  .embed-generator .header .subtitle {
+    font-size: 14px;
+    color: #8888aa;
+    letter-spacing: 0.3px;
+    font-weight: 400;
+  }
+
+  .embed-generator .header .subtitle span {
+    color: #e94560;
+    font-weight: 600;
+  }
+
+  /* ===== BUSCADOR ===== */
+  .embed-generator .search-wrapper {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .embed-generator .search-wrapper .input-container {
+    flex: 1;
+    position: relative;
+    min-width: 180px;
+  }
+
+  .embed-generator .search-wrapper .input-container .search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 17px;
+    opacity: 0.4;
+    pointer-events: none;
+  }
+
+  .embed-generator .search-wrapper input {
+    width: 100%;
+    padding: 14px 16px 14px 44px;
+    border-radius: 12px;
+    border: 2px solid rgba(255,255,255,0.06);
+    background: rgba(255,255,255,0.04);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    outline: none;
+  }
+
+  .embed-generator .search-wrapper input::placeholder {
+    color: #555577;
+    font-weight: 400;
+  }
+
+  .embed-generator .search-wrapper input:focus {
+    border-color: #e94560;
+    background: rgba(255,255,255,0.07);
+    box-shadow: 0 0 30px rgba(233, 69, 96, 0.08);
+  }
+
+  .embed-generator .search-wrapper .btn-search {
+    padding: 14px 28px;
+    border: none;
+    border-radius: 12px;
+    background: #e94560;
+    color: #fff;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    letter-spacing: 0.3px;
+    box-shadow: 0 4px 20px rgba(233, 69, 96, 0.25);
+    white-space: nowrap;
+  }
+
+  .embed-generator .search-wrapper .btn-search:hover {
+    background: #c73652;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(233, 69, 96, 0.4);
+  }
+
+  /* ===== RESULTADOS ===== */
+  .embed-generator .results {
+    background: rgba(255,255,255,0.03);
+    border-radius: 14px;
+    padding: 4px 0;
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 18px;
+    display: none;
+    border: 1px solid rgba(255,255,255,0.04);
+    width: 100%;
+  }
+
+  .embed-generator .results::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .embed-generator .results::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .embed-generator .results::-webkit-scrollbar-thumb {
+    background: #e94560;
+    border-radius: 4px;
+  }
+
+  .embed-generator .results .item {
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+
+  .embed-generator .results .item:hover {
+    background: rgba(233, 69, 96, 0.08);
+    padding-left: 20px;
+  }
+
+  .embed-generator .results .item:last-child {
+    border-bottom: none;
+  }
+
+  .embed-generator .results .item .title {
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  .embed-generator .results .item .meta {
+    color: #666688;
+    font-size: 12px;
+    margin-left: 8px;
+  }
+
+  .embed-generator .results .item .badge {
+    background: rgba(233, 69, 96, 0.15);
+    color: #e94560;
+    padding: 3px 12px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .embed-generator .results .item .badge.serie {
+    background: rgba(79, 195, 247, 0.15);
+    color: #4fc3f7;
+  }
+
+  /* ===== LOADING ===== */
+  .embed-generator .loading {
+    text-align: center;
+    padding: 20px;
+    color: #666688;
+    display: none;
+    font-size: 13px;
+  }
+
+  .embed-generator .loading .dots::after {
+    content: '';
+    animation: dots 1.5s steps(4) infinite;
+  }
+
+  @keyframes dots {
+    0% { content: ''; }
+    25% { content: '.'; }
+    50% { content: '..'; }
+    75% { content: '...'; }
+  }
+
+  /* ===== ERROR ===== */
+  .embed-generator .error-msg {
+    color: #e94560;
+    padding: 18px;
+    text-align: center;
+    font-size: 13px;
+  }
+
+  .embed-generator .no-results {
+    padding: 20px;
+    text-align: center;
+    color: #555577;
+    font-size: 13px;
+  }
+
+  /* ===== RESULT BOX ===== */
+  .embed-generator .result-box {
+    background: rgba(0,0,0,0.3);
+    border-radius: 14px;
+    margin-top: 18px;
+    display: none;
+    border: 1px solid rgba(255,255,255,0.04);
+    overflow: hidden;
+    animation: fadeUp 0.4s ease;
+    width: 100%;
+  }
+
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* ===== REPRODUCTOR ===== */
+  .embed-generator .result-box .player-container {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%;
+    height: 0;
+    background: #000;
+    overflow: hidden;
+  }
+
+  .embed-generator .result-box .player-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  .embed-generator .result-box .player-container .placeholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #444466;
+    font-size: 13px;
+    background: #0a0a15;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .embed-generator .result-box .player-container .placeholder .icon {
+    font-size: 36px;
+  }
+
+  /* ===== CONTROLES SERIE ===== */
+  .embed-generator .result-box .series-controls {
+    padding: 14px 18px 18px 18px;
+    background: rgba(0,0,0,0.4);
+    border-top: 1px solid rgba(255,255,255,0.05);
+    display: none;
+    width: 100%;
+  }
+
+  .embed-generator .result-box .series-controls .info-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+
+  .embed-generator .result-box .series-controls .tipo-badge {
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    background: rgba(233, 69, 96, 0.25);
+    color: #e94560;
+  }
+
+  .embed-generator .result-box .series-controls .tipo-badge.pelicula {
+    background: rgba(45, 106, 79, 0.25);
+    color: #52b788;
+  }
+
+  .embed-generator .result-box .series-controls .selected-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  .embed-generator .result-box .series-controls .season-episode {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .embed-generator .result-box .series-controls .season-episode .field-group {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .embed-generator .result-box .series-controls .season-episode .field-group label {
+    color: #aaaacc;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .embed-generator .result-box .series-controls .season-episode input {
+    width: 50px;
+    padding: 5px 3px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(0,0,0,0.5);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+    outline: none;
+    transition: 0.3s;
+  }
+
+  .embed-generator .result-box .series-controls .season-episode input:focus {
+    border-color: #e94560;
+  }
+
+  .embed-generator .result-box .series-controls .btn-generate {
+    padding: 6px 18px;
+    border: none;
+    border-radius: 8px;
+    background: #2d6a4f;
+    color: #fff;
+    font-weight: 700;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .embed-generator .result-box .series-controls .btn-generate:hover {
+    background: #409f7a;
+    transform: scale(1.02);
+  }
+
+  /* ============================================================ */
+  /* ===== RESPONSIVE - MÓVIL (ANCHO COMPLETO) ===== */
+  /* ============================================================ */
+  @media (max-width: 768px) {
+    body {
+      padding: 6px;
+    }
+
+    .embed-generator {
+      padding: 12px 10px 16px;
+      border-radius: 12px;
+      margin-top: 6px;
+      max-width: 100%;
+      width: 100%;
+      overflow-x: hidden;
+    }
+
+    .embed-generator .header h1 {
+      font-size: 20px;
+    }
+
+    .embed-generator .header .subtitle {
+      font-size: 11px;
+    }
+
+    .embed-generator .search-wrapper {
+      gap: 6px;
+      width: 100%;
+    }
+
+    .embed-generator .search-wrapper .btn-search {
+      width: 100%;
+      justify-content: center;
+      padding: 11px;
+      font-size: 13px;
+      border-radius: 10px;
+    }
+
+    .embed-generator .search-wrapper .input-container {
+      min-width: 100%;
+      width: 100%;
+    }
+
+    .embed-generator .search-wrapper input {
+      padding: 11px 12px 11px 38px;
+      font-size: 14px;
+      border-radius: 10px;
+      width: 100%;
+    }
+
+    .embed-generator .search-wrapper .input-container .search-icon {
+      left: 12px;
+      font-size: 15px;
+    }
+
+    .embed-generator .results {
+      border-radius: 10px;
+      max-height: 250px;
+      width: 100%;
+    }
+
+    .embed-generator .results .item {
+      padding: 10px 12px;
+      flex-wrap: wrap;
+      gap: 4px;
+      width: 100%;
+    }
+
+    .embed-generator .results .item .title {
+      font-size: 13px;
+    }
+
+    .embed-generator .results .item .meta {
+      font-size: 11px;
+      margin-left: 6px;
+    }
+
+    .embed-generator .results .item .badge {
+      font-size: 9px;
+      padding: 2px 10px;
+    }
+
+    /* Reproductor más alto en móvil (4:3) */
+    .embed-generator .result-box .player-container {
+      padding-bottom: 75%;
+      width: 100%;
+    }
+
+    .embed-generator .result-box {
+      border-radius: 10px;
+      width: 100%;
+      margin-top: 14px;
+    }
+
+    .embed-generator .result-box .series-controls {
+      padding: 10px 12px 14px 12px;
+      width: 100%;
+    }
+
+    .embed-generator .result-box .series-controls .info-row {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+      margin-bottom: 8px;
+    }
+
+    .embed-generator .result-box .series-controls .selected-title {
+      font-size: 14px;
+    }
+
+    .embed-generator .result-box .series-controls .season-episode {
+      width: 100%;
+      justify-content: space-between;
+      gap: 4px;
+    }
+
+    .embed-generator .result-box .series-controls .season-episode .field-group label {
+      font-size: 10px;
+    }
+
+    .embed-generator .result-box .series-controls .season-episode input {
+      width: 42px;
+      padding: 4px 2px;
+      font-size: 13px;
+    }
+
+    .embed-generator .result-box .series-controls .btn-generate {
+      padding: 6px 12px;
+      font-size: 12px;
+      flex: 1;
+      text-align: center;
+    }
+
+    .embed-generator .result-box .player-container .placeholder .icon {
+      font-size: 28px;
+    }
+
+    .embed-generator .result-box .player-container .placeholder {
+      font-size: 12px;
+      gap: 6px;
+    }
+  }
+
+  /* ===== TABLET ===== */
+  @media (min-width: 769px) and (max-width: 1024px) {
+    .embed-generator {
+      padding: 22px 18px 28px;
+    }
+
+    .embed-generator .header h1 {
+      font-size: 28px;
+    }
+
+    .embed-generator .result-box .series-controls {
+      padding: 14px 18px 18px 18px;
+    }
+  }
+
+  /* ===== PANTALLAS GRANDES ===== */
+  @media (min-width: 1400px) {
+    .embed-generator {
+      max-width: 1100px;
+      padding: 40px 35px 50px;
+      margin-top: 40px;
+    }
+
+    .embed-generator .header h1 {
+      font-size: 44px;
+    }
+
+    .embed-generator .header .subtitle {
+      font-size: 17px;
+    }
+
+    .embed-generator .search-wrapper input {
+      font-size: 18px;
+      padding: 18px 22px 18px 52px;
+    }
+
+    .embed-generator .search-wrapper .btn-search {
+      padding: 18px 40px;
+      font-size: 17px;
+    }
+
+    .embed-generator .result-box .series-controls .selected-title {
+      font-size: 22px;
+    }
+
+    .embed-generator .result-box .series-controls .season-episode input {
+      width: 65px;
+      padding: 8px 6px;
+      font-size: 16px;
+    }
+  }
+</style>
+
+<!-- ===== HTML ===== -->
+<div class="embed-generator" id="app">
+  <div class="header">
+    <h1>🔍 Buscador</h1>
+    <div class="subtitle">Busca un título y <span>genera un reproductor</span> al instante</div>
+  </div>
+
+  <div class="search-wrapper">
+    <div class="input-container">
+      <span class="search-icon">🔎</span>
+      <input type="text" id="searchInput" placeholder="Ej: Inception, Game of Thrones, Avatar..." />
+    </div>
+    <button class="btn-search" id="searchBtn">Buscar</button>
+  </div>
+
+  <div class="loading" id="loadingMsg">Buscando<span class="dots"></span></div>
+
+  <div class="results" id="resultsContainer"></div>
+
+  <div class="result-box" id="resultBox">
+    <div class="player-container" id="playerContainer">
+      <div class="placeholder" id="placeholderMsg">
+        <span class="icon">🎬</span>
+        <span>Selecciona un resultado</span>
+      </div>
+    </div>
+
+    <div class="series-controls" id="seriesControls">
+      <div class="info-row">
+        <span class="tipo-badge" id="tipoBadge">🎬 Película</span>
+        <span class="selected-title" id="selectedTitle">—</span>
+      </div>
+      <div class="season-episode" id="seasonEpisodeContainer">
+        <div class="field-group">
+          <label>T</label>
+          <input type="number" id="seasonInput" value="1" min="1" max="99" />
+        </div>
+        <div class="field-group">
+          <label>E</label>
+          <input type="number" id="episodeInput" value="1" min="1" max="99" />
+        </div>
+        <button class="btn-generate" id="generateSeriesBtn">▶ Generar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== JAVASCRIPT ===== -->
+<script>
+(function() {
+  var TMDB_API_KEY = '21a22bb78b0e53d514e8a95bc34fc4b2';
+  var TMDB_BASE = 'https://api.themoviedb.org/3';
+
+  var selectedId = null;
+  var selectedType = null;
+
+  var searchInput = document.getElementById('searchInput');
+  var searchBtn = document.getElementById('searchBtn');
+  var resultsContainer = document.getElementById('resultsContainer');
+  var loadingMsg = document.getElementById('loadingMsg');
+  var resultBox = document.getElementById('resultBox');
+  var playerContainer = document.getElementById('playerContainer');
+  var placeholderMsg = document.getElementById('placeholderMsg');
+  var seriesControls = document.getElementById('seriesControls');
+  var tipoBadge = document.getElementById('tipoBadge');
+  var selectedTitle = document.getElementById('selectedTitle');
+  var seasonInput = document.getElementById('seasonInput');
+  var episodeInput = document.getElementById('episodeInput');
+  var generateSeriesBtn = document.getElementById('generateSeriesBtn');
+
+  function buscar() {
+    var query = searchInput.value.trim();
+    if (!query) {
+      mostrarError('Escribe un título para buscar');
+      return;
+    }
+
+    mostrarLoading(true);
+    resultsContainer.style.display = 'none';
+    resultBox.style.display = 'none';
+
+    var url = TMDB_BASE + '/search/multi?api_key=' + TMDB_API_KEY + '&query=' + encodeURIComponent(query) + '&language=es-ES';
+
+    fetch(url)
+      .then(function(res) {
+        if (!res.ok) throw new Error('Error en la API (código ' + res.status + ')');
+        return res.json();
+      })
+      .then(function(data) {
+        mostrarLoading(false);
+        if (data.results && data.results.length > 0) {
+          mostrarResultados(data.results);
+        } else {
+          resultsContainer.innerHTML = '<div class="no-results">No se encontraron resultados para "' + query + '"</div>';
+          resultsContainer.style.display = 'block';
+        }
+      })
+      .catch(function(err) {
+        mostrarLoading(false);
+        mostrarError('Error: ' + err.message);
+      });
+  }
+
+  function mostrarResultados(resultados) {
+    var html = '';
+    var contador = 0;
+
+    resultados.forEach(function(item) {
+      if (item.media_type === 'person') return;
+
+      var titulo = item.title || item.name || 'Sin título';
+      var año = item.release_date ? item.release_date.split('-')[0] : (item.first_air_date ? item.first_air_date.split('-')[0] : '');
+      var tipo = item.media_type === 'movie' ? '🎬 Película' : '📺 Serie';
+      var badgeClass = item.media_type === 'movie' ? '' : 'serie';
+      var id = item.id;
+
+      html += '<div class="item" data-id="' + id + '" data-type="' + item.media_type + '" data-title="' + titulo + '">' +
+        '<div>' +
+          '<span class="title">' + titulo + '</span>' +
+          '<span class="meta">' + (año ? '• ' + año : '') + '</span>' +
+        '</div>' +
+        '<span class="badge ' + badgeClass + '">' + tipo + '</span>' +
+      '</div>';
+      contador++;
+    });
+
+    if (contador === 0) {
+      resultsContainer.innerHTML = '<div class="no-results">No se encontraron películas o series</div>';
+    } else {
+      resultsContainer.innerHTML = html;
+    }
+    resultsContainer.style.display = 'block';
+
+    var items = document.querySelectorAll('.results .item');
+    for (var i = 0; i < items.length; i++) {
+      items[i].addEventListener('click', function() {
+        var id = this.dataset.id;
+        var type = this.dataset.type;
+        var title = this.dataset.title;
+        seleccionarContenido(id, type, title);
+        resultsContainer.style.display = 'none';
+      });
+    }
+  }
+
+  function seleccionarContenido(id, type, title) {
+    selectedId = id;
+    selectedType = type;
+
+    resultBox.style.display = 'block';
+    var isMovie = type === 'movie';
+
+    var oldIframe = playerContainer.querySelector('iframe');
+    if (oldIframe) oldIframe.remove();
+
+    placeholderMsg.style.display = 'flex';
+    placeholderMsg.innerHTML = '<span class="icon">' + (isMovie ? '🎬' : '📺') + '</span>' +
+      '<span>' + (isMovie ? 'Cargando película...' : 'Selecciona temporada y episodio') + '</span>';
+
+    tipoBadge.textContent = isMovie ? '🎬 Película' : '📺 Serie';
+    tipoBadge.className = 'tipo-badge ' + (isMovie ? 'pelicula' : '');
+    selectedTitle.textContent = title;
+
+    if (isMovie) {
+      seriesControls.style.display = 'none';
+      generarEmbed(id, 'movie', null, null);
+    } else {
+      seriesControls.style.display = 'block';
+    }
+
+    setTimeout(function() {
+      resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 200);
+  }
+
+  function generarEmbed(id, type, season, episode) {
+    var isMovie = type === 'movie';
+    var url;
+
+    if (isMovie) {
+      url = 'https://unlimplay.com/f/embed/movie/' + id;
+    } else {
+      url = 'https://unlimplay.com/f/embed/tv/' + id + '/' + season + '/' + episode;
+    }
+
+    placeholderMsg.style.display = 'none';
+
+    var oldIframe = playerContainer.querySelector('iframe');
+    if (oldIframe) oldIframe.remove();
+
+    var iframe = document.createElement('iframe');
+    iframe.src = url;
+    iframe.allowFullscreen = true;
+    iframe.allow = 'autoplay; encrypted-media';
+    playerContainer.appendChild(iframe);
+  }
+
+  function mostrarLoading(estado) {
+    loadingMsg.style.display = estado ? 'block' : 'none';
+  }
+
+  function mostrarError(mensaje) {
+    resultsContainer.innerHTML = '<div class="error-msg">⚠️ ' + mensaje + '</div>';
+    resultsContainer.style.display = 'block';
+  }
+
+  searchBtn.addEventListener('click', buscar);
+  searchInput.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') buscar();
+  });
+
+  generateSeriesBtn.addEventListener('click', function() {
+    if (!selectedId || selectedType !== 'tv') return;
+    var season = parseInt(seasonInput.value) || 1;
+    var episode = parseInt(episodeInput.value) || 1;
+    generarEmbed(selectedId, 'tv', season, episode);
+  });
+
+  console.log('🔍 Buscador de UnLimPlay cargado correctamente.');
+})();
+</script>
